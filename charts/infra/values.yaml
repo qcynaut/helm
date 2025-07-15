@@ -19,7 +19,7 @@ clusterIssuer:
 # FQDN for metrics ingress
 metricsIngress:
   host: null
-  tlsIssuer: "letsencrypt-stagging"
+  tlsIssuer: "letsencrypt-staging"
 
 # Longhorn Subcharts
 longhorn:
