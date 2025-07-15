@@ -2,6 +2,16 @@ apiVersion: v1
 entries:
   gitlab:
   - apiVersion: v2
+    appVersion: 0.1.1
+    created: "2025-07-15T08:39:16.549510712Z"
+    description: A Helm chart for Kubernetes
+    digest: 47bd4698422f2f42b3ea4d70c49471d98a21429e092da1ee3a646b05655b3cdc
+    name: gitlab
+    type: application
+    urls:
+    - https://github.com/qcynaut/helm/releases/download/gitlab-0.1.1/gitlab-0.1.1.tgz
+    version: 0.1.1
+  - apiVersion: v2
     appVersion: 0.1.0
     created: "2025-07-15T07:13:55.036197383Z"
     description: A Helm chart for Kubernetes
@@ -87,4 +97,4 @@ entries:
     urls:
     - https://github.com/qcynaut/helm/releases/download/minio-0.1.1/minio-0.1.1.tgz
     version: 0.1.1
-generated: "2025-07-15T07:21:44.674493707Z"
+generated: "2025-07-15T08:39:16.54952041Z"
