@@ -14,19 +14,14 @@ spec:
                 {{- end }}
                 time_zone: "Asia/Jakarta"
                 hosts:
-                    https: false
                     gitlab:
-                        name: {{ required "gitlab name is required" .Values.domain.gitlab }}
-                        https: false
+                        name: {{ required "gitlab name is required" .Values.domain.gitlab }}\
                     registry:
                         name: {{ required "registry name is required" .Values.domain.registry }}
-                        https: false
                     kas:
                         name: {{ required "kas name is required" .Values.domain.kas }}
-                        https: false
                     pages:
                         name: {{ required "pages name is required" .Values.domain.pages }}
-                        https: false
                     ssh: {{ required "ssh name is required" .Values.domain.ssh }}
                 ingress:
                     class: nginx
