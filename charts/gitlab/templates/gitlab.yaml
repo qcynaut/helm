@@ -14,14 +14,19 @@ spec:
                 {{- end }}
                 time_zone: "Asia/Jakarta"
                 hosts:
+                    https: true
                     gitlab:
-                        name: {{ required "gitlab name is required" .Values.domain.gitlab }}\
+                        name: {{ required "gitlab name is required" .Values.domain.gitlab }}
+                        https: true
                     registry:
                         name: {{ required "registry name is required" .Values.domain.registry }}
+                        https: true
                     kas:
                         name: {{ required "kas name is required" .Values.domain.kas }}
+                        https: true
                     pages:
                         name: {{ required "pages name is required" .Values.domain.pages }}
+                        https: true
                     ssh: {{ required "ssh name is required" .Values.domain.ssh }}
                 ingress:
                     class: nginx
@@ -75,6 +80,8 @@ spec:
                     address: {{ required "smtp address is required" .Values.smtp.host }}
                     port: {{ required "smtp port is required" .Values.smtp.port }}
                     user_name: {{ required "smtp user name is required" .Values.smtp.user_name }}
+                    authentication: plain
+                    starttls_auto: true
                     password:
                         secret: {{ .Release.Name }}-smtp-password
                         key: password
