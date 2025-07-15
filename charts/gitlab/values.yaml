@@ -31,3 +31,10 @@ s3:
   terraformState: null
   uploads: null
   pages: null
+smtp:
+  host: null
+  port: null
+  user_name: null
+  password: null
+  from: null
+  display_name: GitLab

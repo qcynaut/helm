@@ -75,6 +75,17 @@ spec:
                         bucket: {{ required "pages bucket is required" .Values.s3.pages }}
                         connection:
                             secret: {{ .Release.Name }}-object-storage
+                smtp:
+                    enabled: true
+                    address: {{ required "smtp address is required" .Values.smtp.host }}
+                    port: {{ required "smtp port is required" .Values.smtp.port }}
+                    user_name: {{ required "smtp user name is required" .Values.smtp.user_name }}
+                    password:
+                        secret: {{ .Release.Name }}-smtp-password
+                        key: password
+                email:
+                    from: {{ required "smtp from is required" .Values.smtp.from }}
+                    display_name: {{ required "smtp display name is required" .Values.smtp.display_name }}
             nginx-ingress:
                 enabled: false
             gitlab:
