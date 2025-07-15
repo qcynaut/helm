@@ -1,0 +1,58 @@
+apiVersion: v1
+entries:
+  gitlab:
+  - apiVersion: v2
+    appVersion: 0.1.0
+    created: "2025-07-15T07:13:55.036197383Z"
+    description: A Helm chart for Kubernetes
+    digest: 297b24bc554333301f004f451c4009af070a205eb0f01fc3d57962e335c703a1
+    name: gitlab
+    type: application
+    urls:
+    - https://github.com/qcynaut/helm/releases/download/gitlab-0.1.0/gitlab-0.1.0.tgz
+    version: 0.1.0
+  infra:
+  - apiVersion: v2
+    appVersion: 0.1.1
+    created: "2025-07-15T07:13:55.260714998Z"
+    dependencies:
+    - name: longhorn
+      repository: https://charts.longhorn.io
+      version: 1.9.0
+    - alias: tailscale
+      name: tailscale-operator
+      repository: https://pkgs.tailscale.com/helmcharts
+      version: 1.84.3
+    - name: cert-manager
+      repository: https://charts.jetstack.io
+      version: v1.18.2
+    - name: ingress-nginx
+      repository: https://kubernetes.github.io/ingress-nginx
+      version: 4.13.0
+    - alias: metrics
+      name: signoz
+      repository: https://charts.signoz.io
+      version: 0.86.0
+    - alias: metrics-infra
+      name: k8s-infra
+      repository: https://charts.signoz.io
+      version: 0.13.0
+    description: A Helm chart for Kubernetes
+    digest: dbe03be64d5adf96e16a1ea30b75e92bcd5b4b66f2d46e9962908e0f71761e3f
+    name: infra
+    type: application
+    urls:
+    - https://github.com/qcynaut/helm/releases/download/infra-0.1.1/infra-0.1.1.tgz
+    version: 0.1.1
+  minio:
+  - apiVersion: v2
+    appVersion: 0.1.1
+    created: "2025-07-15T07:13:55.382260952Z"
+    description: A Helm chart for Kubernetes
+    digest: 30c75a03e27f399753056e83103d993b45fb02144c1465979f6356c1bb9f2c20
+    name: minio
+    type: application
+    urls:
+    - https://github.com/qcynaut/helm/releases/download/minio-0.1.1/minio-0.1.1.tgz
+    version: 0.1.1
+generated: "2025-07-15T07:13:55.382270159Z"
