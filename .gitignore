@@ -1,2 +1,2 @@
-charts/infra/charts/*
-charts/infra/Chart.lock
+charts/**/charts/*
+charts/**/Chart.lock
