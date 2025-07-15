@@ -1,0 +1,64 @@
+{{- if .Values.storageClass.enableDefaultClass }}
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+    name: longhorn-hdd
+    annotations:
+        storageclass.kubernetes.io/is-default-class: "true"
+provisioner: driver.longhorn.io
+parameters:
+    numberOfReplicas: "1"
+    staleReplicaTimeout: "2880"
+    nodeSelector: "hdd"
+reclaimPolicy: Delete
+allowVolumeExpansion: true
+volumeBindingMode: Immediate
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+    name: longhorn-ssd
+provisioner: driver.longhorn.io
+parameters:
+    numberOfReplicas: "1"
+    staleReplicaTimeout: "2880"
+    nodeSelector: "ssd"
+reclaimPolicy: Delete
+allowVolumeExpansion: true
+volumeBindingMode: Immediate
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+    name: longhorn-nvme
+provisioner: driver.longhorn.io
+parameters:
+    numberOfReplicas: "1"
+    staleReplicaTimeout: "2880"
+    nodeSelector: "nvme"
+reclaimPolicy: Delete
+allowVolumeExpansion: true
+volumeBindingMode: Immediate
+{{- end }}
+{{- if .Values.storageClass.classes }}
+{{- range .Values.storageClass.classes }}
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+    name: {{ .name }}
+{{- if .defaultClass }}
+    annotations:
+        storageclass.kubernetes.io/is-default-class: "true"
+{{- end }}
+provisioner: driver.longhorn.io
+parameters:
+    numberOfReplicas: "1"
+    staleReplicaTimeout: "2880"
+    nodeSelector: {{ .nodeSelector }}
+reclaimPolicy: Delete
+allowVolumeExpansion: true
+volumeBindingMode: Immediate
+{{- end}}
+{{- end}}

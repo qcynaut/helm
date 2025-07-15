@@ -1,0 +1,110 @@
+{{- $name := .Release.Name -}}
+{{- if or .Values.domain.minio .Values.domain.console }}
+{{- $minioDomain := required "minioDomain" .Values.domain.minio }}
+{{- $consoleDomain := required "consoleDomain" .Values.domain.console }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ $name }}
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "10G"
+  {{- if .Values.domain.certIssuer }}
+    cert-manager.io/cluster-issuer: {{ .Values.domain.certIssuer }}
+  {{- end }}
+spec:
+  ingressClassName: nginx
+  rules:
+    {{- if $minioDomain }}
+    - host: {{ $minioDomain }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $name }}
+                port:
+                  number: 80
+    {{- end }}
+    {{- if $consoleDomain }}
+    - host: {{ $consoleDomain }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $name }}-console
+                port:
+                  number: 9090
+    {{- end }}
+  tls:
+    - hosts:
+      {{- if .Values.domain.minio }}
+      - {{ .Values.domain.minio }}
+      {{- end}}
+      {{- if .Values.domain.console }}
+      - {{ .Values.domain.console }}
+      {{- end}}
+      secretName: {{ $name }}-cert
+{{- end }}
+
+{{- if or .Values.domain.additionals.minio .Values.domain.additionals.console }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ $name }}-additional
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "0"
+  {{- if .Values.domain.additionals.certIssuer }}
+    cert-manager.io/cluster-issuer: {{ .Values.domain.additionals.certIssuer }}
+  {{- end }}
+spec:
+  ingressClassName: nginx
+  rules:
+    {{- if .Values.domain.additionals.minio }}
+    {{- range $minioDomain := .Values.domain.additionals.minio }}
+    - host: {{ $minioDomain }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $name }}
+                port:
+                  number: 80
+    {{- end }}
+    {{- end }}
+    {{- if .Values.domain.additionals.console }}
+    {{- range $consoleDomain := .Values.domain.additionals.console }}
+    - host: {{ $consoleDomain }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $name }}-console
+                port:
+                  number: 9090
+    {{- end }}
+    {{- end }}
+  tls:
+    - hosts:
+      {{- if .Values.domain.additionals.minio }}
+      {{- range $minioDomain := .Values.domain.additionals.minio }}
+      - {{ $minioDomain }}
+      {{- end }}
+      {{- end }}
+      {{- if .Values.domain.additionals.console }}
+      {{- range $consoleDomain := .Values.domain.additionals.console }}
+      - {{ $consoleDomain }}
+      {{- end }}
+      {{- end }}
+      secretName: {{ $name }}-additional-cert
+{{- end }}

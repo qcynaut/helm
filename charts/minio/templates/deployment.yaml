@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+metadata:
+  labels:
+    app.kubernetes.io/name: operator
+    app.kubernetes.io/instance: minio-operator
+    {{ include "minio.labels" . | nindent 4 }}
+  name: minio-operator
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    operator.min.io/authors: MinIO, Inc.
+    operator.min.io/license: AGPLv3
+    operator.min.io/support: https://subnet.min.io
+kind: Deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      name: minio-operator
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        operator.min.io/authors: MinIO, Inc.
+        operator.min.io/license: AGPLv3
+        operator.min.io/support: https://subnet.min.io
+      labels:
+        app.kubernetes.io/instance: minio-operator
+        app.kubernetes.io/name: operator
+        name: minio-operator
+        {{ include "minio.labels" . | nindent 8 }}
+    spec:
+      nodeSelector:
+        node-role.kubernetes.io/minio: "true"
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: name
+                operator: In
+                values:
+                - minio-operator
+            topologyKey: kubernetes.io/hostname
+      containers:
+      - args:
+        - controller
+        env:
+        - name: MINIO_CONSOLE_TLS_ENABLE
+          value: "off"
+        - name: OPERATOR_STS_ENABLED
+          value: "on"
+        image: minio/operator:v7.1.1
+        imagePullPolicy: IfNotPresent
+        name: minio-operator
+        resources:
+          requests:
+            cpu: 200m
+            ephemeral-storage: 500Mi
+            memory: 256Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          runAsGroup: 1000
+          runAsNonRoot: true
+          runAsUser: 1000
+          seccompProfile:
+            type: RuntimeDefault
+      serviceAccountName: minio-operator

@@ -1,0 +1,27 @@
+apiVersion: v1
+metadata:
+  labels:
+    control-plane: controller-manager
+  name: gitlab-controller-manager-metrics-service
+  namespace: {{ .Release.Namespace }}
+kind: Service
+spec:
+  ports:
+  - name: https
+    port: 8443
+    targetPort: metrics
+  selector:
+    control-plane: controller-manager
+---
+apiVersion: v1
+metadata:
+  name: gitlab-webhook-service
+  namespace: {{ .Release.Namespace }}
+kind: Service
+spec:
+  ports:
+  - port: 443
+    protocol: TCP
+    targetPort: 9443
+  selector:
+    control-plane: controller-manager

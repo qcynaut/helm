@@ -1,0 +1,76 @@
+# StorageClass for Longhorn
+storageClass:
+  # If enabled, create 3 Storage classes named [longhorn-hdd, longhorn-ssd, longhorn-nvme]
+  # that target different node labels and use different node selectors.
+  enableDefaultClass: true
+  # additional Storage classes to create
+  # e.g.:
+  # classes:
+  #   - name: longhorn-hdd
+  #     nodeSelector: "hdd" # select nodes with label "hdd"
+  #     defaultClass: true
+  classes: null
+# Cluster issuer for cert-manager
+clusterIssuer:
+  email: "email@example.com"
+  cloudflare:
+    token: null
+    email: null
+# FQDN for metrics ingress
+metricsIngress:
+  host: null
+  tlsIssuer: "letsencrypt-stagging"
+
+# Longhorn Subcharts
+longhorn:
+  global:
+    nodeSelector:
+      node-role.kubernetes.io/longhorn: "true"
+  persistence:
+    defaultClass: false
+
+# Tailscale Subcharts
+tailscale:
+  oauth:
+    clientId: ""
+    clientSecret: ""
+
+# Cert-manager Subcharts
+cert-manager:
+  installCRDs: false
+
+# Ingress-nginx Subcharts
+ingress-nginx:
+  tcp: {}
+  udp: {}
+  controller:
+    config:
+      strict-validate-path-type: "false"
+      enable-opentelemetry: "true"
+      otlp-collector-host: "infra-metrics-otel-collector"
+      opentelemetry-config: "/etc/nginx/opentelemetry.toml"
+      opentelemetry-operation-name: "HTTP $request_method $service_name $uri"
+      opentelemetry-trust-incoming-span: "true"
+      otel-service-name: "ingress-nginx"
+    service:
+      type: ClusterIP
+      annotations:
+        tailscale.com/expose: "true"
+
+# Metrics Subcharts
+metrics:
+  nameOverride: "infra-metrics"
+  fullnameOverride: "infra-metrics"
+  signoz:
+    name: "infra-metrics"
+
+# Metrics-infra Subcharts
+metrics-infra:
+  otelCollectorEndpoint: "infra-metrics-otel-collector:4317"
+  presets:
+    loggingExporter:
+      enabled: false
+    logsCollection:
+      enabled: false
+    k8sEvents:
+      enabled: true

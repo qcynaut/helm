@@ -1,0 +1,23 @@
+root:
+  user: minio
+  password: minio123
+console:
+  user: console
+  password: console123
+pools:
+  - name: pool-0
+    size: 20Gi
+    storageClassName: longhorn-hdd
+# domain name for minio
+domain:
+  minio: null
+  console: null
+  certIssuer: letsencrypt-staging
+  additionals:
+    minio: null
+    console: null
+    certIssuer: null
+
+operator:
+  nodeSelector:
+    node-role.kubernetes.io/minio: "true"

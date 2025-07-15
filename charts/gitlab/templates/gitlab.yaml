@@ -1,0 +1,112 @@
+apiVersion: apps.gitlab.com/v1beta1
+kind: GitLab
+metadata:
+    name: {{ .Release.Name }}
+spec:
+    chart:
+        version: "9.1.2"
+        values:
+            global:
+                {{- if .Values.enterprise }}
+                edition: ee
+                {{- else }}
+                edition: ce
+                {{- end }}
+                time_zone: "Asia/Jakarta"
+                hosts:
+                    https: false
+                    gitlab:
+                        name: {{ required "gitlab name is required" .Values.domain.gitlab }}
+                        https: false
+                    registry:
+                        name: {{ required "registry name is required" .Values.domain.registry }}
+                        https: false
+                    kas:
+                        name: {{ required "kas name is required" .Values.domain.kas }}
+                        https: false
+                    pages:
+                        name: {{ required "pages name is required" .Values.domain.pages }}
+                        https: false
+                    ssh: {{ required "ssh name is required" .Values.domain.ssh }}
+                ingress:
+                    class: nginx
+                    configureCertmanager: false
+                    annotations:
+                        cert-manager.io/cluster-issuer: {{ required "certIssuer is required" .Values.certIssuer }}
+                    tls:
+                        enabled: true
+                        secretName: {{ .Release.Name }}-tls
+                minio:
+                    enabled: false
+                registry:
+                    bucket: {{ required "registry bucket is required" .Values.s3.registry }}
+                appConfig:
+                    artifacts:
+                        bucket: {{ required "artifacts bucket is required" .Values.s3.artifact }}
+                    backups:
+                        bucket: {{ required "backups bucket is required" .Values.s3.backup.bucket }}
+                        tmpBucket: {{ required "backups tmp bucket is required" .Values.s3.backup.tmpBucket }}
+                    ciSecureFiles:
+                        enabled: true
+                        bucket: {{ required "ciSecureFiles bucket is required" .Values.s3.ciSecureFiles }}
+                    dependencyProxy:
+                        enabled: true
+                        bucket: {{ required "dependencyProxy bucket is required" .Values.s3.dependencyProxy }}
+                    externalDiffs:
+                        enabled: true
+                        bucket: {{ required "externalDiffs bucket is required" .Values.s3.externalDiffs }}
+                    lfs:
+                        bucket: {{ required "lfs bucket is required" .Values.s3.lfs }}
+                    packages:
+                        bucket: {{ required "packages bucket is required" .Values.s3.packages }}
+                    terraformState:
+                        enabled: true
+                        bucket: {{ required "terraformState bucket is required" .Values.s3.terraformState }}
+                    uploads:
+                        bucket: {{ required "uploads bucket is required" .Values.s3.uploads }}
+                    object_store:
+                        connection:
+                            secret: {{ .Release.Name }}-object-storage
+                        enabled: true
+                pages:
+                    enabled: true
+                    objectStore:
+                        enabled: true
+                        bucket: {{ required "pages bucket is required" .Values.s3.pages }}
+                        connection:
+                            secret: {{ .Release.Name }}-object-storage
+            nginx-ingress:
+                enabled: false
+            gitlab:
+                webservice:
+                    ingress:
+                        tls:
+                            secretName: {{ .Release.Name }}-tls
+                kas:
+                    ingress:
+                        tls:
+                            secretName: {{ .Release.Name }}-kas-tls
+                toolbox:
+                    backups:
+                        objectStorage:
+                            config:
+                                secret: {{ .Release.Name }}-s3cmd-config
+                                key: config
+            registry:
+                storage:
+                    secret: {{ .Release.Name }}-registry-storage
+                    key: config
+                ingress:
+                    tls:
+                        secretName: {{ .Release.Name }}-registry-tls
+                {{- if .Values.metadataDatabase.enabled }}
+                database:
+                    enabled: true
+                    name: {{ required "metadata database name is required" .Values.metadataDatabase.name }}
+                    user: {{ required "metadata database user is required" .Values.metadataDatabase.user }}
+                    password:
+                        secret: {{ .Release.Name }}-metadata-database
+                        key: password
+                    migrations:
+                        enabled: true
+                {{- end }}

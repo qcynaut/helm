@@ -1,0 +1,13 @@
+apiVersion: cert-manager.io/v1
+metadata:
+  name: gitlab-serving-cert
+  namespace: {{ .Release.Namespace }}
+kind: Certificate
+spec:
+  dnsNames:
+  - gitlab-webhook-service.{{ .Release.Namespace }}.svc
+  - gitlab-webhook-service.{{ .Release.Namespace }}.svc.cluster.local
+  issuerRef:
+    kind: Issuer
+    name: gitlab-selfsigned-issuer
+  secretName: webhook-server-cert

@@ -1,0 +1,64 @@
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: gitlab-app-rolebinding-nonroot
+kind: ClusterRoleBinding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: gitlab-app-role-nonroot
+subjects:
+- kind: ServiceAccount
+  name: gitlab-app-nonroot
+  namespace: {{ .Release.Namespace }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: gitlab-metrics-auth-rolebinding
+kind: ClusterRoleBinding
+subjects:
+- kind: ServiceAccount
+  name: gitlab-manager
+  namespace: {{ .Release.Namespace }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: gitlab-metrics-auth-role
+---
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: gitlab-manager-rolebinding
+kind: ClusterRoleBinding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: gitlab-manager-role
+subjects:
+- kind: ServiceAccount
+  name: gitlab-manager
+  namespace: {{ .Release.Namespace }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: gitlab-nginx-ingress
+kind: ClusterRoleBinding
+subjects:
+- kind: ServiceAccount
+  name: gitlab-nginx-ingress
+  namespace: {{ .Release.Namespace }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: gitlab-nginx-ingress
+---
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: gitlab-prometheus-server
+kind: ClusterRoleBinding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: gitlab-prometheus-server
+subjects:
+- kind: ServiceAccount
+  name: gitlab-prometheus-server
+  namespace: {{ .Release.Namespace }}

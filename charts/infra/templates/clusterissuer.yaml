@@ -1,0 +1,92 @@
+{{- if .Values.clusterIssuer.cloudflare.token }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+    name: cloudflare-token
+type: Opaque
+stringData:
+    api-token: {{ .Values.clusterIssuer.cloudflare.token }}
+{{- end }}
+---
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+    name: letsencrypt-prod
+spec:
+    acme:
+        email: {{ .Values.clusterIssuer.email | quote }}
+        server: https://acme-v02.api.letsencrypt.org/directory
+        profile: tlsserver
+        privateKeySecretRef:
+            name: letsencrypt-prod
+        solvers:
+            - http01:
+                ingress:
+                    ingressClassName: nginx
+                    ingressTemplate:
+                        metadata:
+                            annotations:
+                                nginx.ingress.kubernetes.io/ssl-redirect: "false"
+---
+{{- if .Values.clusterIssuer.cloudflare.token }}
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+    name: letsencrypt-prod-dns
+spec:
+    acme:
+        email: {{ .Values.clusterIssuer.email | quote }}
+        server: https://acme-v02.api.letsencrypt.org/directory
+        profile: tlsserver
+        privateKeySecretRef:
+            name: letsencrypt-prod-dns
+        solvers:
+            - dns01:
+                cloudflare:
+                    email: {{ coalesce .Values.clusterIssuer.cloudflare.email .Values.clusterIssuer.email | quote }}
+                    apiTokenSecretRef:
+                        name: cloudflare-token
+                        key: api-token
+{{- end }}
+---
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+    name: letsencrypt-staging
+spec:
+    acme:
+        email: {{ .Values.clusterIssuer.email | quote }}
+        server: https://acme-staging-v02.api.letsencrypt.org/directory
+        profile: tlsserver
+        privateKeySecretRef:
+            name: letsencrypt-stagging
+        solvers:
+            - http01:
+                ingress:
+                    ingressClassName: nginx
+                    ingressTemplate:
+                        metadata:
+                            annotations:
+                                nginx.ingress.kubernetes.io/ssl-redirect: "false"
+---
+{{- if .Values.clusterIssuer.cloudflare.token }}
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+    name: letsencrypt-stagging-dns
+spec:
+    acme:
+        email: {{ coalesce .Values.clusterIssuer.cloudflare.email .Values.clusterIssuer.email | quote }}
+        server: https://acme-staging-v02.api.letsencrypt.org/directory
+        profile: tlsserver
+        privateKeySecretRef:
+            name: letsencrypt-staging-dns
+        solvers:
+            - dns01:
+                cloudflare:
+                    email: {{ coalesce .Values.clusterIssuer.cloudflare.email .Values.clusterIssuer.email | quote }}
+                    apiTokenSecretRef:
+                        name: cloudflare-token
+                        key: api-token
+{{- end }}

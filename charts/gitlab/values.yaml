@@ -1,0 +1,32 @@
+enterprise: false
+# see https://docs.gitlab.com/administration/packages/container_registry_metadata_database/
+metadataDatabase:
+  enabled: false
+  name: registry
+  user: registry
+  password: randomstring
+domain:
+  gitlab: null
+  registry: null
+  kas: null
+  pages: null
+  ssh: null
+certIssuer: null
+s3:
+  accessKey: null
+  secretKey: null
+  host: null
+  endpoint: null
+  registry: null
+  artifact: null
+  backup:
+    bucket: null
+    tmpBucket: null
+  ciSecureFiles: null
+  dependencyProxy: null
+  externalDiffs: null
+  lfs: null
+  packages: null
+  terraformState: null
+  uploads: null
+  pages: null

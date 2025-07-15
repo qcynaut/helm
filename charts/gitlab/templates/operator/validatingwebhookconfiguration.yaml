@@ -1,0 +1,33 @@
+apiVersion: admissionregistration.k8s.io/v1
+metadata:
+  name: gitlab-validating-webhook-configuration
+  annotations:
+    cert-manager.io/inject-ca-from: {{ .Release.Namespace }}/gitlab-serving-cert
+kind: ValidatingWebhookConfiguration
+webhooks:
+- admissionReviewVersions:
+  - v1
+  clientConfig:
+    service:
+      name: gitlab-webhook-service
+      namespace: {{ .Release.Namespace }}
+      path: /validate-apps-gitlab-com-v1beta1-gitlab
+  failurePolicy: Fail
+  name: vgitlab.kb.io
+  rules:
+  - apiGroups:
+    - apps.gitlab.com
+    apiVersions:
+    - v1beta1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - gitlabs
+  sideEffects: None
+  namespaceSelector:
+    matchExpressions:
+    - key: kubernetes.io/metadata.name
+      operator: In
+      values:
+      - {{ .Release.Namespace }}
