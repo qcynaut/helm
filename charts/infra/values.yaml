@@ -52,6 +52,7 @@ ingress-nginx:
       opentelemetry-operation-name: "HTTP $request_method $service_name $uri"
       opentelemetry-trust-incoming-span: "true"
       otel-service-name: "ingress-nginx"
+      use-proxy-protocol: "true"
     service:
       type: ClusterIP
       annotations:
