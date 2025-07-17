@@ -62,6 +62,8 @@ ingress-nginx:
 metrics:
   nameOverride: "infra-metrics"
   fullnameOverride: "infra-metrics"
+  global:
+    storageClass: null
   signoz:
     name: "infra-metrics"
 
